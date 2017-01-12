@@ -6,19 +6,17 @@
 ;; the terms of this license.
 ;; You must not remove this notice, or any other, from this software.
 
-(ns ^{:doc ""
+(ns ^{:doc "Built-in wabbit emitter definitions."
       :author "Kenneth Leung"}
 
   czlab.wabbit.svcs.core)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;(set! *warn-on-reflection* true)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(def
-  ^:dynamic
-  *wabbit-emitter-defs*
-
+(def ^:private emitter-svcs
   {:czlab.wabbit.io.files/FilePicker
    {:info {:version "1.0"
            :type :files
@@ -158,11 +156,7 @@
            :port 7551
            :handler ""}}})
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn emittersByType
-  ""
-  []
+(def ^:private emitter-types
   (persistent!
     (reduce
       #(let [[k v] %2
@@ -172,7 +166,21 @@
                            assoc :service k)]
          (assoc! %1 t v'))
       (transient {})
-      *wabbit-emitter-defs*)))
+      emitter-svcs)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(defn emittersByService
+  ""
+  []
+  (doto emitter-svcs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(defn emittersByType
+  ""
+  []
+  (doto emitter-types))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;EOF

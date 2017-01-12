@@ -19,7 +19,15 @@
 
 (deftest czlabtestwabbitsvcstest
 
-  (is (== 1 1))
+  (is (map? (emittersByService)))
+  (is (map? (emittersByType)))
+
+  (is (> (count (emittersByService)) 0))
+  (is (> (count (emittersByType)) 0))
+
+  (is (== (count (emittersByService))
+          (count (emittersByType))))
+
   (is (string? "That's all Folks!")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

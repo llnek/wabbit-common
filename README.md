@@ -1,14 +1,27 @@
 # wabbit-svcs
 
-A Clojure library designed to ... well, that part is up to you.
+Wabbit's built-in emitter definitions.
 
 ## Usage
 
-FIXME
+    (require '[czlab.wabbit.svcs.core :as wc])
+
+    (let [types (wc/emittersByService)]
+      (doseq [[k v] types]
+        (println "service = " k)
+        (println "info map = " (:info v))
+        (println "config map = " (:conf v))))
+
+    (let [types (wc/emittersByType)]
+      (doseq [[k v] types]
+        (println "type = " k)
+        (println "info map = " (:info v))
+        (println "config map = " (:conf v))))
+
 
 ## License
 
-Copyright © 2017 FIXME
+Copyright © 2013-2017 Kenneth Leung
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
