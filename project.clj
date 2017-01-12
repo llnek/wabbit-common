@@ -4,8 +4,6 @@
 
   :license {:url "http://www.eclipse.org/legal/epl-v10.html"
             :name "Eclipse Public License"}
-
-  ;;:scm "https://github.com/llnek/wabbit-svcs.git"
   :url "https://github.com/llnek/wabbit-svcs"
 
   :description "Wabbit's built-in emitter definitions."
