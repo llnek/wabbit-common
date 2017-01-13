@@ -8,17 +8,15 @@
 
   :description "Wabbit's built-in emitter definitions."
 
-  :coordinate! "czlab/wabbit/svcs"
-
   :plugins [[lein-codox "0.10.2"]
-            [lein-czlab "0.1.1"]]
-  :hooks [leiningen.lein-czlab]
+            [lein-pprint "1.1.2"]]
 
   :profiles {:provided {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
                                        [codox/codox "0.10.2" :scope "provided"]]}
              :uberjar {:aot :all}}
 
   :global-vars {*warn-on-reflection* true}
+  :coordinate! "czlab/wabbit/svcs"
   :target-path "out/%s"
   :omit-source true
   :aot :all
