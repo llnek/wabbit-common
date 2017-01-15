@@ -9,7 +9,9 @@
   :description "Common internal bits for wabbit."
 
   :plugins [[lein-codox "0.10.2"]
+            [lein-czlab "0.1.1"]
             [lein-pprint "1.1.2"]]
+  :hooks [leiningen.lein-czlab]
 
   ;;:dependencies []
 
