@@ -1,22 +1,8 @@
-# wabbit-svcs
+# wabbit-common
 
-Wabbit's built-in emitter definitions.
+Common internal bits for wabbit.
 
 ## Usage
-
-    (require '[czlab.wabbit.svcs.core :as wc])
-
-    (let [types (wc/emittersByService)]
-      (doseq [[k v] types]
-        (println "service = " k)
-        (println "info map = " (:info v))
-        (println "config map = " (:conf v))))
-
-    (let [types (wc/emittersByType)]
-      (doseq [[k v] types]
-        (println "type = " k)
-        (println "info map = " (:info v))
-        (println "config map = " (:conf v))))
 
 
 ## License

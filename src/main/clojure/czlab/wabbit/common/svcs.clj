@@ -9,7 +9,7 @@
 (ns ^{:doc "Built-in wabbit emitter definitions."
       :author "Kenneth Leung"}
 
-  czlab.wabbit.svcs.core)
+  czlab.wabbit.common.svcs)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;(set! *warn-on-reflection* true)
@@ -156,6 +156,8 @@
            :port 7551
            :handler ""}}})
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 (def ^:private emitter-types
   (persistent!
     (reduce
@@ -170,14 +172,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn emittersByService
+(defn emitterByService
+  ""
+  [svc]
+  (get emitter-svcs svc))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(defn emitterByType
+  ""
+  [ty]
+  (get emitter-types ty))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(defn emitterServices
   ""
   []
   (doto emitter-svcs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn emittersByType
+(defn emitterTypes
   ""
   []
   (doto emitter-types))

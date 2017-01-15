@@ -9,24 +9,24 @@
 (ns ^{:doc ""
       :author "Kenneth Leung"}
 
-  czlab.test.wabbit.svcs.test
+  czlab.test.wabbit.common.test
 
   (:require [clojure.test :refer :all]
-            [czlab.wabbit.svcs.core :refer :all]))
+            [czlab.wabbit.common.svcs :refer :all]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;(set! *warn-on-reflection* true)
 
-(deftest czlabtestwabbitsvcstest
+(deftest czlabtestwabbitcommon-test
 
-  (is (map? (emittersByService)))
-  (is (map? (emittersByType)))
+  (is (map? (emitterServices)))
+  (is (map? (emitterTypes)))
 
-  (is (> (count (emittersByService)) 0))
-  (is (> (count (emittersByType)) 0))
+  (is (> (count (emitterServices)) 0))
+  (is (> (count (emitterTypes)) 0))
 
-  (is (== (count (emittersByService))
-          (count (emittersByType))))
+  (is (== (count (emitterServices))
+          (count (emitterTypes))))
 
   (is (string? "That's all Folks!")))
 
