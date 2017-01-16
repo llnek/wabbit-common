@@ -9,15 +9,15 @@
 (ns ^{:doc ""
       :author "Kenneth Leung"}
 
-  czlab.test.wabbit.common.test
+  czlab.test.wabbit.shared.test
 
   (:require [clojure.test :refer :all]
-            [czlab.wabbit.common.svcs :refer :all]))
+            [czlab.wabbit.shared.svcs :refer :all]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;(set! *warn-on-reflection* true)
 
-(deftest czlabtestwabbitcommon-test
+(deftest czlabtestwabbitshared-test
 
   (is (map? (emitterServices)))
   (is (map? (emitterTypes)))

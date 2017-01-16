@@ -6,17 +6,17 @@
 ;; the terms of this license.
 ;; You must not remove this notice, or any other, from this software.
 
-(ns czlab.wabbit.common.new
+(ns czlab.wabbit.shared.new
 
   (:import [java.util.concurrent.atomic AtomicInteger]
            [java.rmi.server UID]
            [java.util UUID])
 
-  (:require [czlab.wabbit.common.templates :as lein]
+  (:require [czlab.wabbit.shared.templates :as lein]
             [clojure.java.io :as io]
             [clojure.pprint :as pp]
             [clojure.string :as cs]
-            [czlab.wabbit.common.svcs :as sc]))
+            [czlab.wabbit.shared.svcs :as sc]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;

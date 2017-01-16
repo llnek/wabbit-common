@@ -9,7 +9,7 @@
 (ns ^{:doc "Built-in wabbit emitter definitions."
       :author "Kenneth Leung"}
 
-  czlab.wabbit.common.svcs)
+  czlab.wabbit.shared.svcs)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;(set! *warn-on-reflection* true)

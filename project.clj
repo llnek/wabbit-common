@@ -1,12 +1,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defproject io.czlab/wabbit-common "0.1.0"
+(defproject io.czlab/wabbit-shared "0.1.0"
 
   :license {:url "http://www.eclipse.org/legal/epl-v10.html"
             :name "Eclipse Public License"}
-  :url "https://github.com/llnek/wabbit-common"
+  :url "https://github.com/llnek/wabbit-shared"
 
-  :description "Common internal bits for wabbit."
+  :description "Sharable parts of wabbit."
 
   :plugins [[lein-codox "0.10.2"]
             [lein-czlab "0.1.1"]
@@ -20,7 +20,7 @@
              :uberjar {:aot :all}}
 
   :global-vars {*warn-on-reflection* true}
-  :coordinate! "czlab/wabbit/common"
+  :coordinate! "czlab/wabbit/shared"
   :target-path "out/%s"
   :omit-source true
   :aot :all

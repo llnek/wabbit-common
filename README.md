@@ -1,6 +1,6 @@
-# wabbit-common
+# wabbit-shared
 
-Common internal bits for wabbit.
+Sharable parts of wabbit.
 
 ## Usage
 

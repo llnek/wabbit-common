@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Original: https://github.com/technomancy/leiningen/src/leiningen/new/templates.clj
 ;;
-(ns czlab.wabbit.common.templates
+(ns czlab.wabbit.shared.templates
 
   (:require [clojure.java.io :as io]
             [clojure.string :as cs])
@@ -104,7 +104,7 @@
   ""
   [path]
   (let [p (cs/join "/"
-                   ["czlab/wabbit/common/new" path])]
+                   ["czlab/wabbit/shared/new" path])]
     [p (io/resource p)]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
