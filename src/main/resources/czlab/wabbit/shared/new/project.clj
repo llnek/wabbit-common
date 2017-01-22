@@ -9,9 +9,10 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [io.czlab/wabbit "0.1.0"]]
+                 [io.czlab/wabbit "1.0.0"]]
 
-  :plugins [[lein-codox "0.10.2"]]
+  :plugins [[lein-codox "0.10.2"]
+            [lein-pprint "1.1.2"]]
 
   :profiles {:provided {:dependencies
                         [[org.clojure/clojurescript "1.9.293" :scope "provided"]
