@@ -15,8 +15,7 @@
   (:require [czlab.wabbit.shared.templates :as lein]
             [clojure.java.io :as io]
             [clojure.pprint :as pp]
-            [clojure.string :as cs]
-            [czlab.wabbit.shared.svcs :as sc]))
+            [clojure.string :as cs]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -127,7 +126,7 @@
 (defn- checkSvcArgs
   ""
   [args]
-  (let [types (sc/emitterTypes)
+  (let [types {};;(sc/emitterTypes)
         out (atom {})
         cnt (AtomicInteger.)]
     (doseq [a args
@@ -163,7 +162,6 @@
      data {:user (System/getProperty "user.name")
            :nested-dirs (lein/nameToPath main-ns)
            :app-key (str (UUID/randomUUID))
-           :io-services svcstr
            :h2dbpath h2dbUrl
            :domain main-ns
            :raw-name name
