@@ -121,26 +121,6 @@
       (string? v)
       (swap! out conj [kk v]))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- checkSvcArgs
-  ""
-  [args]
-  (let [types {};;(sc/emitterTypes)
-        out (atom {})
-        cnt (AtomicInteger.)]
-    (doseq [a args
-            :let [a' (cs/replace a #"^[\-]+" "")
-                  k (keyword a')
-                  v (types k)]
-            :when (some? v)]
-      (let [n (str (name k) (.incrementAndGet cnt))
-            n' (keyword n)]
-        (swap! out assoc n' (:conf v))))
-    (let [s (with-out-str (pp/pprint @out))]
-      ;;(println s)
-      s)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn new<>
@@ -151,7 +131,7 @@
      render-fn (:renderer-fn options)
      main-ns (lein/sanitizeNsp name)
      pod (last (cs/split main-ns #"\."))
-     svcstr (checkSvcArgs args)
+     uid (str (UUID/randomUUID))
      h2dbUrl (->
                (cs/join "/"
                         [(if (isWindows?)
@@ -161,7 +141,7 @@
                (str ";MVCC=TRUE;AUTO_RECONNECT=TRUE"))
      data {:user (System/getProperty "user.name")
            :nested-dirs (lein/nameToPath main-ns)
-           :app-key (str (UUID/randomUUID))
+           :app-key (cs/replace uid #"-" "")
            :h2dbpath h2dbUrl
            :domain main-ns
            :raw-name name
