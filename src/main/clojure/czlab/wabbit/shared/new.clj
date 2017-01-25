@@ -28,12 +28,11 @@
 (def ^:private template-files
   {"conf/pod.conf" "pod.conf"
    "etc"
-   {"log4j2c.xml" identity
+   {"Resources_en.properties" identity
+    "mime.properties" identity
+    "log4j2c.xml" identity
     "log4j2d.xml" identity
     "shiro.ini" identity}
-   "src/main/resources/{{nested-dirs}}/etc"
-   {"mime.properties" "etc/mime.properties"
-    "Resources_en.properties" "etc/Resources_en.properties"}
    "src/main/clojure/{{nested-dirs}}"
    {"core.clj" "src/soa.clj"}
    "src/main/java/{{nested-dirs}}"
