@@ -6,20 +6,17 @@
 
   {{domain}}.core
 
-  (:require [czlab.xlib.logging :as log]
-            [czlab.wabbit.etc.core :as etc :refer :all])
+  (:require [czlab.basal.logging :as log])
 
   (:use [czlab.convoy.net.core]
-        [czlab.wabbit.sys.core]
-        [czlab.xlib.consts]
-        [czlab.xlib.core]
-        [czlab.xlib.str]
+        [czlab.basal.core]
+        [czlab.basal.str]
         [czlab.flux.wflow.core])
 
   (:import [czlab.flux.wflow Job TaskDef WorkStream]
            [czlab.convoy.net RouteInfo HttpResult]
-           [czlab.wabbit.io HttpEvent]
-           [czlab.wabbit.server Container]))
+           [czlab.wabbit.plugs.io HttpMsg]
+           [czlab.wabbit.sys Execvisor]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -42,25 +39,23 @@
 ;;
 (defn dftHandler
   ""
-  ^WorkStream
   []
-  (workStream<>
-    (script<>
-      (fn [_ ^Job job]
-        (let
-          [^HttpEvent evt (.event job)
-           ri (:info (.routeGist evt))
-           tpl (.template ^RouteInfo ri)
-           co (.. evt source server)
-           {:keys [data ctype]}
-           (.loadTemplate co tpl (ftlContext))
-           res (httpResult<>)]
-          (.setContentType res ctype)
-          (.setContent res data)
-          (replyResult (.socket evt) res))))
-    :catch
-    (fn [_ err]
-      (log/error "Oops, I got an error!" err))))
+  #(let
+     [^HttpMsg evt (.origin ^Job %)
+      co (.. evt source server)
+      gist (.msgGist evt)
+      ^RouteInfo
+      ri (get-in gist
+                 [:route :info])
+      tpl (.template ri)
+      {:keys [data ctype]}
+      (loadTemplate (.config co)
+                    tpl
+                    (ftlContext))
+      res (httpResult<>)]
+     (.setContentType res ctype)
+     (.setContent res data)
+     (replyResult (.socket evt) res)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
