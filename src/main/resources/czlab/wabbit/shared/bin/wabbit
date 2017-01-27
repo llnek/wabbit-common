@@ -1,28 +1,17 @@
 #!/bin/bash
-
+##############################################################################
 ### osx sux, has no proper readlink.
 check_darwin() {
   WABBIT_BIN=$( perl -e 'use Cwd "abs_path";print abs_path(shift)' $0 )
   WABBIT_BIN=$( dirname $WABBIT_BIN )
   WABBIT_HOME=$( dirname $WABBIT_BIN )
 }
+
 check_linux() {
   WABBIT_BIN=$(dirname $(readlink -f $0))/../
   WABBIT_HOME=$(readlink -f $WABBIT_BIN)
   WABBIT_BIN=$WABBIT_HOME/bin
 }
-
-txtrst=$(tput sgr0) # Text reset.
-txtred=$(tput setaf 1) #Red
-txtgrn=$(tput setaf 2) # Green
-txtylw=$(tput setaf 3) # Yellow
-txtblu=$(tput setaf 4) # Blue
-txtpur=$(tput setaf 5) # Purple
-txtcyn=$(tput setaf 6) # Cyan
-txtwht=$(tput setaf 7) # White
-
-OSTYPE=`uname -s`
-CWD=`pwd`
 
 if [ "$OSTYPE" = "Darwin" ]; then
   check_darwin
@@ -30,6 +19,11 @@ else
   check_linux
 fi
 
+##############################################################################
+OSTYPE=`uname -s`
+CWD=`pwd`
+
+##############################################################################
 if [ "$JAVA_HOME" = "" ] ; then
   echo "Attempt to reference standard java location on system: /usr/bin."
   #echo "Please set JAVA_HOME"
@@ -37,50 +31,23 @@ if [ "$JAVA_HOME" = "" ] ; then
   JAVA_HOME=/usr
 fi
 
-JPROF=-agentpath:/Applications/jprofiler7/bin/macos/libjprofilerti.jnilib=port=8849
-DBG="-agentlib:jdwp=transport=dt_socket,server=y,address=8787,suspend=n"
-BOOT_HOME=$WABBIT_HOME/bfs
-
-PATCHDIR=$WABBIT_HOME/patch/*
-LIBDIR=$WABBIT_HOME/lib/*
-DISTDIR=$WABBIT_HOME/dist/*
-WABLIB=$PATCHDIR:$DISTDIR:$LIBDIR
-
-JCMD=$JAVA_HOME/bin/java
-BG=false
-
-VMXRGS="-XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC"
-# -XX:MaxPermSize=256m
+##############################################################################
 MAINCZ=czlab.wabbit.etc.cons
-PROCCZ=czlab.wabbit.server.Runtime
+JCMD=$JAVA_HOME/bin/java
+LIBS=$WABBIT_HOME/lib/*
 
-#LIBP="-Djava.library.path=$WABBIT_BIN"
-#NETTY=-Dio.netty.eventLoopThreads=16
-#48G
-#MEM="-Xms8192m -Xmx49152m"
-#36G
-#MEM="-Xms8192m -Xmx36864m"
-#32G
-#MEM="-Xms8192m -Xmx32768m"
-MEM="-Xms1024m -Xmx8192m"
-LJC=etc/log4j2c.xml
-LJD=etc/log4j2d.xml
-L4JFILE=
-if [ -e $LJD -a -d "logs" ]
-then
-  L4JFILE=$LJD
-elif [ -e $LJC ]
-then
-  L4JFILE=$LJC
-else
-  L4JFILE=${WABBIT_BIN}/log4j2.xml
+##############################################################################
+if [ ! -e "logs" ]; then
+  mkdir "logs"
 fi
-L4J=-Dlog4j.configurationFile=file:${L4JFILE}
-KPORT=localhost:4444
-KILL9="-Dwabbit.kill.port=$KPORT"
 
+if [ ! -d "logs" ]; then
+  echo "error: directory [logs] is not found."
+fi
+
+##############################################################################
 show_proc() {
-  pid=$( ps -ef | grep $PROCCZ | grep -v grep | awk '{print $2}' )
+  pid=$( ps -ef | grep $MAINCZ | grep -v grep | awk '{print $2}' )
   if [ -n "$pid" ]; then
     echo "wabbit is running with process-id: ${pid}."
   else
@@ -88,55 +55,84 @@ show_proc() {
   fi
 }
 
+##############################################################################
 stop_proc() {
-  pid=$( ps -ef | grep $PROCCZ | grep -v grep | awk '{print $2}' )
+  pid=$( ps -ef | grep $MAINCZ | grep -v grep | awk '{print $2}' )
+  echo "stopping wabbit..."
   if [ -n "$pid" ]; then
     #kill $pid
     cd /tmp
-    wget http://$KPORT/kill9 2>&1 > /dev/null
+    wget http://{{kill-port}}/kill9 > /dev/null 2>&1
     cd $CWD
+  fi 
+  exit $?
+}
+
+##############################################################################
+run_proc() {
+  pid=$( ps -ef | grep $MAINCZ | grep -v grep | awk '{print $2}' )
+  if [ -n "$pid" ]
+  then
+    echo "wabbit is already running with process-id: ${pid}."
+  elif [ "$2" = "-b" -o "$2" = "--background" ]
+  then
+    run_proc_bg
+  else
+    run_proc_fg
   fi
 }
 
-if [ "$1" = "run" ]; then
-  MAINCZ=$PROCCZ
-  if [ "$2" = "-bg" -o "$2" = "--background" ]; then
-    BG=true
-  fi
-fi
+##############################################################################
+run_proc_bg() {
+  exec sh -c \
+    "exec nohup $JCMD {{vmopts}} \
+    -cp $LIBS $MAINCZ $@ > /dev/null 2>&1 &"
+}
 
-if [ $# -eq 1 -a "$1" = "debug" ]; then
-  echo "remote debug mode"
-else
-  DBG=
-fi
+##############################################################################
+run_proc_fg() {
+  exec sh -c \
+    "exec $JCMD {{vmopts}} -cp $LIBS $MAINCZ $@"
+}
 
-if [ $# -eq 1 -a "$1" = "stop" ]; then
-  echo "stopping wabbit..."
-  stop_proc
-  exit $?
-fi
+##############################################################################
+debug_proc_fg() {
+  exec sh -c \
+    "exec $JCMD {{vmopts}} -cp $LIBS {{agent}} $MAINCZ $@"
+}
 
-if [ $# -eq 1 -a "$1" = "status" ]; then
-  show_proc
-  exit 0
-fi
+##############################################################################
+debug_proc_bg() {
+  exec sh -c \
+    "exec nohup $JCMD {{vmopts}} \
+    -cp $LIBS {{agent}} $MAINCZ $@ > /dev/null 2>&1 &"
+}
 
-if [ "$1" = "task" ]; then
-  shift 1
-  exec $JAVA_HOME/bin/java $VMXRGS $MEM \
-  -Dwabbit.home.dir="$WABBIT_HOME" \
-  -Dwabbit.proc.dir="$CWD" \
-  -Dboot.app.path="$WABBIT_BIN" \
-  -DBOOT_HOME="$BOOT_HOME" -jar "$WABBIT_BIN/bs.jar" "$@"
-else
-  if [ "$BG" = "true" ]; then
-    nohup $JCMD $VMXRGS $MEM -cp $WABLIB $DBG $L4J $KILL9 $MAINCZ $WABBIT_HOME $@ &
+
+##############################################################################
+debug_proc() {
+  pid=$( ps -ef | grep $MAINCZ | grep -v grep | awk '{print $2}' )
+  if [ -n "$pid" ]
+  then
+    echo "wabbit is already running with process-id: ${pid}."
+  elif [ "$2" = "-b" -o "$2" = "--background" ]
+  then
+    debug_proc_bg
   else
-    $JCMD $VMXRGS $MEM -cp $WABLIB $DBG $L4J $KILL9 $MAINCZ $WABBIT_HOME $@
+    debug_proc_fg
   fi
-fi
+}
 
-exit $?
+##############################################################################
+case $1 in
+  start | run ) run_proc ;;
+  debug ) debug_proc ;;
+  status ) show_proc ;;
+  stop ) stop_proc ;;
+  *) echo -n "unknown option $1" ;;
+esac
 
+
+##############################################################################
+#EOF 
 

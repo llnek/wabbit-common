@@ -32,6 +32,20 @@
   :test-paths ["src/test/clojure"]
   :resource-paths ["src/main/resources"]
 
+  :debugger
+  {:profiler ""
+   :agent "-agentlib:jdwp=transport=dt_socket,server=y,address=8787,suspend=n"}
+
+  :runtime
+  {:kill-port "localhost:4444"
+   :jvm-opts
+   ["-XX:+CMSClassUnloadingEnabled"
+    "-XX:+UseConcMarkSweepGC"
+    "-Xms1g"
+    "-Xmx8g"
+    "-Dwabbit.kill.port={{kill-port}}"
+    "-Dlog4j.configurationFile=file:etc/log4j2d.xml"]}
+
   :jvm-opts ["-Dlog4j.configurationFile=file:etc/log4j2c.xml"]
   :javac-options ["-source" "8"
                   "-Xlint:unchecked" "-Xlint:-options" "-Xlint:deprecation"])
