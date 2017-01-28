@@ -13,15 +13,19 @@ check_linux() {
   WABBIT_BIN=$WABBIT_HOME/bin
 }
 
+##############################################################################
+OSTYPE=`uname -s`
+CWD=`pwd`
 if [ "$OSTYPE" = "Darwin" ]; then
   check_darwin
 else
   check_linux
 fi
 
-##############################################################################
-OSTYPE=`uname -s`
+#############################################################################
+cd $WABBIT_HOME
 CWD=`pwd`
+#echo "Running wabbit from $CWD"
 
 ##############################################################################
 if [ "$JAVA_HOME" = "" ] ; then
@@ -32,7 +36,7 @@ if [ "$JAVA_HOME" = "" ] ; then
 fi
 
 ##############################################################################
-MAINCZ=czlab.wabbit.etc.cons
+MAINCZ=czlab.wabbit.sys.core
 JCMD=$JAVA_HOME/bin/java
 LIBS=$WABBIT_HOME/lib/*
 
@@ -46,8 +50,13 @@ if [ ! -d "logs" ]; then
 fi
 
 ##############################################################################
+get_procid() {
+  pid=$( ps -ef | grep -F $MAINCZ | grep -v grep | awk '{print $2}' )
+}
+
+##############################################################################
 show_proc() {
-  pid=$( ps -ef | grep $MAINCZ | grep -v grep | awk '{print $2}' )
+  get_procid
   if [ -n "$pid" ]; then
     echo "wabbit is running with process-id: ${pid}."
   else
@@ -57,20 +66,19 @@ show_proc() {
 
 ##############################################################################
 stop_proc() {
-  pid=$( ps -ef | grep $MAINCZ | grep -v grep | awk '{print $2}' )
-  echo "stopping wabbit..."
+  get_procid
   if [ -n "$pid" ]; then
+    echo "wabbit is stopping with process-id: ${pid}."
     #kill $pid
     cd /tmp
     wget http://{{kill-port}}/kill9 > /dev/null 2>&1
     cd $CWD
-  fi 
-  exit $?
+  fi
 }
 
 ##############################################################################
 run_proc() {
-  pid=$( ps -ef | grep $MAINCZ | grep -v grep | awk '{print $2}' )
+  get_procid
   if [ -n "$pid" ]
   then
     echo "wabbit is already running with process-id: ${pid}."
@@ -86,32 +94,32 @@ run_proc() {
 run_proc_bg() {
   exec sh -c \
     "exec nohup $JCMD {{vmopts}} \
-    -cp $LIBS $MAINCZ $@ > /dev/null 2>&1 &"
+    -cp \"$LIBS\" $MAINCZ $@ > /dev/null 2>&1 &"
 }
 
 ##############################################################################
 run_proc_fg() {
   exec sh -c \
-    "exec $JCMD {{vmopts}} -cp $LIBS $MAINCZ $@"
+    "exec $JCMD {{vmopts}} -cp \"$LIBS\" $MAINCZ $@"
 }
 
 ##############################################################################
 debug_proc_fg() {
   exec sh -c \
-    "exec $JCMD {{vmopts}} -cp $LIBS {{agent}} $MAINCZ $@"
+    "exec $JCMD {{vmopts}} -cp \"$LIBS\" {{agent}} $MAINCZ $@"
 }
 
 ##############################################################################
 debug_proc_bg() {
   exec sh -c \
     "exec nohup $JCMD {{vmopts}} \
-    -cp $LIBS {{agent}} $MAINCZ $@ > /dev/null 2>&1 &"
+    -cp \"$LIBS\" {{agent}} $MAINCZ $@ > /dev/null 2>&1 &"
 }
 
 
 ##############################################################################
 debug_proc() {
-  pid=$( ps -ef | grep $MAINCZ | grep -v grep | awk '{print $2}' )
+  get_procid
   if [ -n "$pid" ]
   then
     echo "wabbit is already running with process-id: ${pid}."
