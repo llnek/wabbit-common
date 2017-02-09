@@ -11,22 +11,12 @@
 
   czlab.test.wabbit.shared.test
 
-  (:require [clojure.test :refer :all]
-            [czlab.wabbit.shared.svcs :refer :all]))
+  (:require [clojure.test :refer :all]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;(set! *warn-on-reflection* true)
 
 (deftest czlabtestwabbitshared-test
-
-  (is (map? (emitterServices)))
-  (is (map? (emitterTypes)))
-
-  (is (> (count (emitterServices)) 0))
-  (is (> (count (emitterTypes)) 0))
-
-  (is (== (count (emitterServices))
-          (count (emitterTypes))))
 
   (is (string? "That's all Folks!")))
 

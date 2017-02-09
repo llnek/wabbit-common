@@ -68,10 +68,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn- juid
-  ""
-  []
-  (.replaceAll (str (UID.)) "[:\\-]+" ""))
+(defn- juid "" [] (.replaceAll (str (UID.)) "[:\\-]+" ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -83,20 +80,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn- render
-  ""
-  [path data]
-  (let []
-    (if (some #(.endsWith ^String path ^String %)
-              [".png" ".ico" ".jpg" ".gif"])
-      ((lein/rawResourcer *template-name*) path)
-      ((lein/renderer *template-name*) path data))))
+(defn- render "" [path data]
+  (if (some #(.endsWith ^String path ^String %)
+            [".png" ".ico" ".jpg" ".gif"])
+    ((lein/rawResourcer *template-name*) path)
+    ((lein/renderer *template-name*) path data)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn- doRender
-  ""
-  [tfiles data out]
+  "" [tfiles data out]
   (doseq [t tfiles]
     (if (string? t)
       (swap! out conj t)
@@ -106,8 +99,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn- traverse
-  ""
-  [par tfiles out]
+  "" [par tfiles out]
   (doseq [[k v] tfiles
           :let [kk (sanitizePath (str par "/" k))]]
     (cond
@@ -159,5 +151,4 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;EOF
-
 

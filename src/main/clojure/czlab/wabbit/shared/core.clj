@@ -21,21 +21,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn deleteDir
-  ""
-  [dir]
-  (try
-    (FileUtils/deleteDirectory (io/file dir))
-    (catch Throwable _)))
+(defn deleteDir "" [dir]
+  (try (FileUtils/deleteDirectory (io/file dir)) (catch Throwable _)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn cleanDir
-  ""
-  [dir]
-  (try
-    (FileUtils/cleanDirectory (io/file dir))
-    (catch Throwable _)))
+(defn cleanDir "" [dir]
+  (try (FileUtils/cleanDirectory (io/file dir)) (catch Throwable _)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;EOF

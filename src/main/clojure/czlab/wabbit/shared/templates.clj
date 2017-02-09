@@ -22,9 +22,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn- fixLineSeps
-  ""
-  [s]
+(defn- fixLineSeps "" [s]
   (->> (if (System/getenv "LEIN_NEW_UNIX_NEWLINES")
          "\n"
          (System/getProperty "line.separator"))
@@ -33,8 +31,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn- slurpToLF
-  ""
-  [^BufferedReader r]
+  "" [^BufferedReader r]
   (let [sb (StringBuilder.)]
     (loop [s (.readLine r)]
       (if (nil? s)
@@ -46,9 +43,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn- slurpResource
-  ""
-  [res]
+(defn- slurpResource "" [res]
   ; for 2.0.0 compatibility, can break in 3.0.0
   (-> (if (string? res)
         (io/resource res) res)
@@ -61,48 +56,36 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn nameToPath
-  ""
-  [s]
+(defn nameToPath "" [s]
   (-> (sanitize s)
       (cs/replace "." java.io.File/separator)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn sanitizeNsp
-  ""
-  [s]
+(defn sanitizeNsp "" [s]
   (-> (cs/replace s "/" ".")
       (cs/replace "_" "-")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn groupName
-  ""
-  [s]
+(defn groupName "" [s]
   (let [grpseq (butlast (cs/split (sanitizeNsp s) #"\."))]
     (if (seq grpseq)
       (->> grpseq (interpose ".") (apply str)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn year
-  ""
-  [] (.get (Calendar/getInstance) Calendar/YEAR))
+(defn year "" [] (.get (Calendar/getInstance) Calendar/YEAR))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn date
-  ""
-  []
-  (let [df (java.text.SimpleDateFormat. "yyyy-MM-dd")]
-    (.format df (java.util.Date.))))
+(defn date "" []
+  (-> (java.text.SimpleDateFormat. "yyyy-MM-dd")
+      (.format (java.util.Date.))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn- resPath
-  ""
-  [path]
+(defn- resPath "" [path]
   (let [p (cs/join "/"
                    ["czlab/wabbit/shared/new" path])]
     [p (io/resource p)]))
@@ -110,12 +93,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn renderer
-  ""
-  [name & [render-fn]]
+  "" [name & [render-fn]]
   (let [render (or render-fn *renderer-fn*)]
     (fn [template & [data]]
       (let [[p r] (resPath template)]
-        (if (some? r)
+        (if r
           (if data
             (render (slurpResource r) data)
             (io/reader r))
@@ -124,21 +106,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn rawResourcer
-  ""
-  [name]
+(defn rawResourcer "" [name]
   (fn [file]
     (let [[p r] (resPath file)]
-      (if (some? r)
+      (if r
         (io/input-stream r)
         (trap! (format "Resource '%s' not found" p))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn- templatePath
-  ""
-  ^File
-  [name path data]
+  "" ^File [name path data]
   (io/file name (*renderer-fn* path data)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -147,23 +125,22 @@
   ""
   [{:keys [dir force?] :as cli-options}
    {:keys [name] :as data} & paths]
-  (let []
-    (if (or (= "." dir)
-            (.mkdir (io/file dir)) force?)
-      (doseq [path paths]
-        (if (string? path)
-          (.mkdirs (templatePath dir path data))
-          (let [[path content & options] path
-                path (templatePath dir path data)
-                options (apply hash-map options)]
-            (.mkdirs (.getParentFile path))
-            (io/copy content (io/file path))
-            (when (:executable options)
-              (.setExecutable path true)))))
-      (trap! (str "Could not create directory "
-                  dir
-                  ". Maybe it already exists?"
-                  "  See also :force or --force")))))
+  (if (or (= "." dir)
+          (.mkdir (io/file dir)) force?)
+    (doseq [path paths]
+      (if (string? path)
+        (.mkdirs (templatePath dir path data))
+        (let [[path content & options] path
+              path (templatePath dir path data)
+              options (apply hash-map options)]
+          (.mkdirs (.getParentFile path))
+          (io/copy content (io/file path))
+          (when (:executable options)
+            (.setExecutable path true)))))
+    (trap! (str "Could not create directory "
+                dir
+                ". Maybe it already exists?"
+                "  See also :force or --force"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;EOF
