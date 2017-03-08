@@ -10,11 +10,11 @@
 
   :dependencies [[commons-io/commons-io "2.5"]]
 
-  :plugins [[lein-codox "0.10.2"]
-            [lein-pprint "1.1.2"]]
+  :plugins [[cider/cider-nrepl "0.14.0"]
+            [lein-codox "0.10.3"]
+            [lein-cprint "1.2.0"]]
 
-  :profiles {:provided {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
-                                       [codox/codox "0.10.2" :scope "provided"]]}
+  :profiles {:provided {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]]}
              :uberjar {:aot :all}}
 
   :global-vars {*warn-on-reflection* true}

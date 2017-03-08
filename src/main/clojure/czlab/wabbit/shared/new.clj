@@ -27,33 +27,44 @@
 ;;
 (def ^:private template-files
   {"conf/pod.conf" "pod.conf"
+
    "etc"
    {"Resources_en.properties" identity
     "mime.properties" identity
     "log4j2c.xml" identity
     "log4j2d.xml" identity
     "shiro.ini" identity}
+
    "src/main/clojure/{{nested-dirs}}"
    {"core.clj" "src/soa.clj"}
+
    "src/main/java/{{nested-dirs}}"
    {"HelloWorld.java" "src/HelloWorld.java"}
+
    "src/test/clojure/{{nested-dirs}}/test"
    {"test.clj" "src/test.clj"}
+
    "src/test/java/{{nested-dirs}}/test"
    {"ClojureJUnit.java" "src/ClojureJUnit.java"
     "JUnit.java" "src/JUnit.java"}
+
    "src/web/media"
    {"favicon.png" "web/favicon.png"
     "favicon.ico" "web/favicon.ico"}
+
    "src/web/pages" {"index.html" "web/index.html"}
    "src/web/scripts" {"main.js" "web/main.js"}
    "src/web/styles" {"main.scss" "web/main.scss"}
+
    ".gitignore" "gitignore"
    "CHANGELOG.md" identity
+
    "doc" {"intro.md" "intro.md"}
+
    "LICENSE" identity
    "project.clj" identity
    "README.md" identity
+
    "public" {}})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -81,7 +92,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn- render "" [path data]
-  (if (some #(.endsWith ^String path ^String %)
+  (if (some #(cs/ends-with? path %)
             [".png" ".ico" ".jpg" ".gif"])
     ((lein/rawResourcer *template-name*) path)
     ((lein/renderer *template-name*) path data)))
@@ -115,8 +126,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn new<>
-  "A lein template for creating a czlab/wabbit application"
-  [name options & args]
+  "Lein template for creating
+  a czlab/wabbit application" [name options & args]
+
   (let
     [args (if (empty? args) ["-web"] args)
      render-fn (:renderer-fn options)
@@ -126,9 +138,7 @@
      h2dbUrl (->
                (cs/join "/"
                         [(if (isWindows?)
-                           "/c:/temp" "/tmp")
-                         (juid)
-                         pod])
+                           "/c:/temp" "/tmp") (juid) pod])
                (str ";MVCC=TRUE;AUTO_RECONNECT=TRUE"))
      data {:user (System/getProperty "user.name")
            :nested-dirs (lein/nameToPath main-ns)

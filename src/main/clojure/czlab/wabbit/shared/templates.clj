@@ -6,8 +6,8 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as cs])
 
-  (:import [java.io BufferedReader File]
-           [java.util Calendar]))
+  (:import [java.util Calendar]
+           [java.io BufferedReader File]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; can't set this to stencil.core/render-string here because
@@ -63,8 +63,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn sanitizeNsp "" [s]
-  (-> (cs/replace s "/" ".")
-      (cs/replace "_" "-")))
+  (-> (cs/replace s "/" ".") (cs/replace "_" "-")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -122,9 +121,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn toFiles
-  ""
-  [{:keys [dir force?] :as cli-options}
-   {:keys [name] :as data} & paths]
+  "" [{:keys [dir force?] :as cli-options}
+      {:keys [name] :as data} & paths]
+
   (if (or (= "." dir)
           (.mkdir (io/file dir)) force?)
     (doseq [path paths]
