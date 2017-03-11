@@ -18,6 +18,7 @@
    [io.czlab/wabbit "1.0.0"]]
 
   :plugins [[wabbit/lein-template "1.0.0"]
+            [cider/cider-nrepl "0.14.0"]
             [lein-codox "0.10.3"]
             [lein-cprint "1.2.0"]]
 
