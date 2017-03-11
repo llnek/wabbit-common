@@ -39,7 +39,7 @@
    {"core.clj" "src/soa.clj"}
 
    "src/main/java/{{nested-dirs}}"
-   {"HelloWorld.java" "src/HelloWorld.java"}
+   {"Bonjour.java" "src/Bonjour.java"}
 
    "src/test/clojure/{{nested-dirs}}/test"
    {"test.clj" "src/test.clj"}

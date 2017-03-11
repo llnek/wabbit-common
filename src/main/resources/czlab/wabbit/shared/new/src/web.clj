@@ -13,7 +13,7 @@
         [czlab.basal.str]
         [czlab.flux.wflow.core])
 
-  (:import [czlab.flux.wflow Job TaskDef WorkStream]
+  (:import [czlab.flux.wflow Job Activity Workstream]
            [czlab.convoy.net RouteInfo HttpResult]
            [czlab.wabbit.plugs.io HttpMsg]
            [czlab.wabbit.sys Execvisor]))
@@ -37,25 +37,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn dftHandler
-  ""
-  []
+(defn dftHandler "" []
   #(let
      [^HttpMsg evt (.origin ^Job %)
-      co (.. evt source server)
       gist (.msgGist evt)
+      co (. evt source)
       ^RouteInfo
       ri (get-in gist
                  [:route :info])
-      tpl (.template ri)
+      tpl (some-> ri .template)
       {:keys [data ctype]}
-      (loadTemplate (.config co)
-                    tpl
-                    (ftlContext))
-      res (httpResult<>)]
+      (if (hgl? tpl)
+        (loadTemplate co tpl (ftlContext)))
+      res (httpResult<> evt)]
      (.setContentType res ctype)
      (.setContent res data)
-     (replyResult (.socket evt) res)))
+     (replyResult res (.config co))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;

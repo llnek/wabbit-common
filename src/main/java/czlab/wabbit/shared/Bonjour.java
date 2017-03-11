@@ -14,7 +14,7 @@ package czlab.wabbit.shared;
  * @author Kenneth Leung
  *
  */
-public class HelloWorld {
+public class Bonjour {
 }
 
 

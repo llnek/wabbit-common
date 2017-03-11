@@ -12,21 +12,17 @@
         [czlab.basal.core]
         [czlab.basal.str])
 
-  (:import [czlab.flux.wflow TaskDef Job WorkStream]))
+  (:import [czlab.flux.wflow Activity Job Workstream]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn dftHandler
-  ""
-  []
+(defn dftHandler "" []
   (fn [^Job job]
     (log/info "I  just handled a job %s" (.id job))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn myAppMain
-  ""
-  []
+(defn myAppMain "" []
   (log/info "My AppMain called!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

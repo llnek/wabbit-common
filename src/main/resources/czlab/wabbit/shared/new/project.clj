@@ -9,7 +9,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies
-  [[org.clojure/clojurescript "1.9.456"]
+  [[org.clojure/clojurescript "1.9.495"]
    [org.clojure/clojure "1.8.0"]
    [commons-logging "1.2"]
    [net.mikera/cljunit "0.6.0" :scope "test"]
@@ -18,8 +18,8 @@
    [io.czlab/wabbit "1.0.0"]]
 
   :plugins [[wabbit/lein-template "1.0.0"]
-            [lein-codox "0.10.2"]
-            [lein-pprint "1.1.2"]]
+            [lein-codox "0.10.3"]
+            [lein-cprint "1.2.0"]]
 
   :kill-port "localhost:4444"
   :profiles

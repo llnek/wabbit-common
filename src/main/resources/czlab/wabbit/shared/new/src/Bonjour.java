@@ -1,9 +1,9 @@
 package {{domain}};
 
-public class HelloWorld {
+public class Bonjour {
 
   public static void main(String[] args) {
-    System.out.println("Hello world!");
+    System.out.println("Bonjour!");
   }
 
 }
