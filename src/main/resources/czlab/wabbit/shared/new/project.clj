@@ -9,11 +9,9 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies
-  [[org.clojure/clojurescript "1.9.495"]
+  [[org.clojure/clojurescript "1.9.521"]
    [org.clojure/clojure "1.8.0"]
    [commons-logging "1.2"]
-   [net.mikera/cljunit "0.6.0" :scope "test"]
-   [junit/junit "4.12" :scope "test"]
    [io.czlab/wabbit-cons "1.0.0"]
    [io.czlab/wabbit "1.0.0"]]
 

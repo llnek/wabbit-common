@@ -6,17 +6,11 @@
 
   {{domain}}.core
 
-  (:require [czlab.basal.logging :as log])
-
-  (:use [czlab.convoy.net.core]
+  (:use [czlab.convoy.core]
         [czlab.basal.core]
-        [czlab.basal.str]
-        [czlab.flux.wflow.core])
+        [czlab.basal.str])
 
-  (:import [czlab.flux.wflow Job Activity Workstream]
-           [czlab.convoy.net RouteInfo HttpResult]
-           [czlab.wabbit.plugs.io HttpMsg]
-           [czlab.wabbit.sys Execvisor]))
+  (:import [java.io File]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -37,27 +31,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn dftHandler "" []
-  #(let
-     [^HttpMsg evt (.origin ^Job %)
-      gist (.msgGist evt)
-      co (. evt source)
-      ^RouteInfo
-      ri (get-in gist
-                 [:route :info])
-      tpl (some-> ri .template)
-      {:keys [data ctype]}
-      (if (hgl? tpl)
-        (loadTemplate co tpl (ftlContext)))
-      res (httpResult<> evt)]
-     (.setContentType res ctype)
-     (.setContent res data)
-     (replyResult res (.config co))))
+(defn dftHandler "" [evt res]
+  (do-with
+    [ch (:socket evt)]
+    (let
+      [plug (get-pluglet evt)
+       svr (get-server plug)
+       ri (get-in evt
+                  [:route :info])
+       tpl (:template ri)
+       {:keys [data ctype]}
+       (if (hgl? tpl)
+         (loadTemplate svr tpl (ftlContext)))]
+      (->>
+        (-> (set-res-header ch res "content-type" ctype)
+            (assoc :body data))
+        (reply-result ch )))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn myAppMain "" [_]
-  (log/info "My AppMain called!"))
+(defn myAppMain "" [svr]
+  (println  "My AppMain called!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;EOF
