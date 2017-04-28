@@ -14,6 +14,7 @@
 ;; pulling in the stencil lib in this library will cause
 ;; classloading issues when used by lein-wabbit as a
 ;; leiningen template.
+;; this function should return back a string if using stencil
 (def ^:dynamic *renderer-fn* nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -24,7 +24,7 @@
       (last (cs/split (str *ns*) #"\."))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
+;;left hand side is the target, right side is from the resource path
 (def ^:private template-files
   {"conf/pod.conf" "pod.conf"
 
@@ -44,9 +44,9 @@
    "src/test/clojure/{{nested-dirs}}/test"
    {"test.clj" "src/test.clj"}
 
-   "src/test/java/{{nested-dirs}}/test"
-   {"ClojureJUnit.java" "src/ClojureJUnit.java"
-    "JUnit.java" "src/JUnit.java"}
+   ;;"src/test/java/{{nested-dirs}}/test"
+   ;;{"ClojureJUnit.java" "src/ClojureJUnit.java"
+   ;;"JUnit.java" "src/JUnit.java"}
 
    "src/web/media"
    {"favicon.png" "web/favicon.png"
@@ -147,7 +147,7 @@
            :domain main-ns
            :raw-name name
            :project pod
-           :ver "0.1.0"
+           :ver "0.1"
            :name name
            :year (lein/year)
            :date (lein/date)}
