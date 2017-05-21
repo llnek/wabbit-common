@@ -6,15 +6,15 @@
 
   {{domain}}.core
 
-  (:use [czlab.basal.core]
-        [czlab.basal.str])
+  (:require [czlab.basal.core :as c]
+            [czlab.basal.str :as s])
 
   (:import [java.io File]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn dftHandler "" [evt res]
-  (println "I just handled event: " (id?? evt)))
+  (println "I just handled event: " (c/id?? evt)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;

@@ -6,9 +6,11 @@
 
   {{domain}}.core
 
-  (:use [czlab.convoy.core]
-        [czlab.basal.core]
-        [czlab.basal.str])
+  (:require [czlab.wabbit.plugs.mvc :as mvc]
+            [czlab.convoy.core :as cc]
+            [czlab.wabbit.xpis :as xp]
+            [czlab.basal.core :as c]
+            [czlab.basal.str :as s])
 
   (:import [java.io File]))
 
@@ -32,21 +34,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn dftHandler "" [evt res]
-  (do-with
+  (c/do-with
     [ch (:socket evt)]
     (let
-      [plug (get-pluglet evt)
-       svr (get-server plug)
+      [plug (xp/get-pluglet evt)
+       svr (xp/get-server plug)
        ri (get-in evt
                   [:route :info])
        tpl (:template ri)
        {:keys [data ctype]}
-       (if (hgl? tpl)
-         (loadTemplate svr tpl (ftlContext)))]
+       (if (s/hgl? tpl)
+         (mvc/loadTemplate svr tpl (ftlContext)))]
       (->>
-        (-> (set-res-header ch res "content-type" ctype)
+        (-> (cc/set-res-header ch res "content-type" ctype)
             (assoc :body data))
-        (reply-result ch )))))
+        cc/reply-result ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
