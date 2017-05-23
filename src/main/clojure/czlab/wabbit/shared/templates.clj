@@ -96,7 +96,9 @@
   "" [name & [render-fn]]
   (let [render (or render-fn *renderer-fn*)]
     (fn [template & [data]]
-      (let [[p r] (resPath template)]
+      (let [template (if data
+                       (render template data) template)
+            [p r] (resPath template)]
         (if r
           (if data
             (render (slurpResource r) data)

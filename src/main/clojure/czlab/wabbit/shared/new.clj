@@ -36,7 +36,7 @@
     "shiro.ini" identity}
 
    "src/main/clojure/{{nested-dirs}}"
-   {"core.clj" "src/soa.clj"}
+   {"core.clj" "src/{{app-type}}.clj"}
 
    "src/main/java/{{nested-dirs}}"
    {"Bonjour.java" "src/Bonjour.java"}
@@ -48,13 +48,22 @@
    ;;{"ClojureJUnit.java" "src/ClojureJUnit.java"
    ;;"JUnit.java" "src/JUnit.java"}
 
-   "src/web/media"
+   "public/res/main"
    {"favicon.png" "web/favicon.png"
     "favicon.ico" "web/favicon.ico"}
 
-   "src/web/pages" {"index.html" "web/index.html"}
-   "src/web/scripts" {"main.js" "web/main.js"}
-   "src/web/styles" {"main.scss" "web/main.scss"}
+   "public/htm/main"
+   {"index_p1.ftl" "web/index_p1.ftl"
+    "index_p2.ftl" "web/index_p2.ftl"
+    "index_p3.ftl" "web/index_p3.ftl"
+    "index_p4.ftl" "web/index_p4.ftl"
+    "index.html" "web/index.html"}
+
+   "public/jsc/main"
+   {"main.js" "web/main.js"}
+
+   "public/css/main"
+   {"main.css" "web/main.scss"}
 
    ".gitignore" "gitignore"
    "CHANGELOG.md" identity
@@ -131,6 +140,8 @@
 
   (let
     [args (if (empty? args) ["-web"] args)
+     web? (>= (.indexOf (cs/lower-case
+                          (str (first args))) "web") 0)
      render-fn (:renderer-fn options)
      main-ns (lein/sanitizeNsp name)
      pod (last (cs/split main-ns #"\."))
@@ -143,6 +154,7 @@
      data {:user (System/getProperty "user.name")
            :nested-dirs (lein/nameToPath main-ns)
            :app-key (cs/replace uid #"-" "")
+           :app-type (if web? "web" "soa")
            :h2dbpath h2dbUrl
            :domain main-ns
            :raw-name name

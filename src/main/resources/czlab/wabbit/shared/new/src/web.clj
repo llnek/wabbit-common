@@ -44,9 +44,9 @@
        tpl (:template ri)
        {:keys [data ctype]}
        (if (s/hgl? tpl)
-         (mvc/loadTemplate svr tpl (ftlContext)))]
+         (mvc/loadTemplate plug tpl (ftlContext)))]
       (->>
-        (-> (cc/set-res-header ch res "content-type" ctype)
+        (-> (cc/set-res-header res "content-type" ctype)
             (assoc :body data))
         cc/reply-result ))))
 
