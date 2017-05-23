@@ -36,7 +36,7 @@ if [ "$JAVA_HOME" = "" ] ; then
 fi
 
 ##############################################################################
-MAINCZ=czlab.wabbit.sys.core
+MAINCZ=czlab.wabbit.core
 JCMD=$JAVA_HOME/bin/java
 LIBS=$WABBIT_HOME/lib/*
 
@@ -137,7 +137,7 @@ case $1 in
   debug ) debug_proc ;;
   status ) show_proc ;;
   stop ) stop_proc ;;
-  *) echo -n "unknown option $1" ;;
+  *) echo "unknown option: $1" ;;
 esac
 
 
