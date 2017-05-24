@@ -25,15 +25,15 @@
     </RollingFile>
   </Appenders>
   <Loggers>
-    <Logger name="{{domain}}" level="debug" additivity="false">
+    <Logger name="{{domain}}" level="info" additivity="false">
       <AppenderRef ref="ROLLER" />
       <AppenderRef ref="STDOUT"/>
     </Logger>
-    <Logger name="czlab" level="debug" additivity="false">
+    <Logger name="czlab" level="info" additivity="false">
       <AppenderRef ref="ROLLER" />
       <AppenderRef ref="STDOUT" />
     </Logger>
-    <Root level="debug">
+    <Root level="error">
       <AppenderRef ref="STDOUT"/>
     </Root>
   </Loggers>

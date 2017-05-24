@@ -37,10 +37,9 @@
   :target-path "target/%s"
   :aot :all
 
-  :aliases {"deploy" ["with-profile"
-                      "podify" "wabbit"]
-            "run" ["trampoline"
-                   "run" "-m" "czlab.wabbit.core"]}
+  :aliases {"wabbit-deploy" ["with-profile" "podify" "wabbit"]
+            "wabbit-run" ["trampoline" "run" "-m" "czlab.wabbit.core"]
+            "wabbit-console" ["trampoline" "run" "-m" "czlab.wabbit.cons.con7"]}
 
   :java-source-paths ["src/main/java" "src/test/java"]
   :source-paths ["src/main/clojure"]

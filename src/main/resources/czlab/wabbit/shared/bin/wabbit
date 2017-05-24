@@ -36,6 +36,7 @@ if [ "$JAVA_HOME" = "" ] ; then
 fi
 
 ##############################################################################
+CONSCZ=czlab.wabbit.cons.con7
 MAINCZ=czlab.wabbit.core
 JCMD=$JAVA_HOME/bin/java
 LIBS=$WABBIT_HOME/lib/*
@@ -48,6 +49,12 @@ fi
 if [ ! -d "logs" ]; then
   echo "error: directory [logs] is not found."
 fi
+
+##############################################################################
+run_console() {
+  exec sh -c \
+    "exec $JCMD {{vmopts}} -cp \"$LIBS\" $CONSCZ $@"
+}
 
 ##############################################################################
 get_procid() {
@@ -137,7 +144,7 @@ case $1 in
   debug ) debug_proc ;;
   status ) show_proc ;;
   stop ) stop_proc ;;
-  *) echo "unknown option: $1" ;;
+  *) run_console ;;
 esac
 
 
