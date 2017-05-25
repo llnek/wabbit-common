@@ -52,8 +52,9 @@ fi
 
 ##############################################################################
 run_console() {
+  local opts=$@
   exec sh -c \
-    "exec $JCMD {{vmopts}} -cp \"$LIBS\" $CONSCZ -home \"$WABBIT_HOME\" $@"
+    "exec $JCMD {{vmopts}} -cp \"$LIBS\" $CONSCZ -domus \"$WABBIT_HOME\" $opts"
 }
 
 ##############################################################################
@@ -101,26 +102,26 @@ run_proc() {
 run_proc_bg() {
   exec sh -c \
     "exec nohup $JCMD {{vmopts}} \
-    -cp \"$LIBS\" $MAINCZ -home \"$WABBIT_HOME\" $@ > /dev/null 2>&1 &"
+    -cp \"$LIBS\" $MAINCZ -domus \"$WABBIT_HOME\" $@ > /dev/null 2>&1 &"
 }
 
 ##############################################################################
 run_proc_fg() {
   exec sh -c \
-    "exec $JCMD {{vmopts}} -cp \"$LIBS\" $MAINCZ -home \"$WABBIT_HOME\" $@"
+    "exec $JCMD {{vmopts}} -cp \"$LIBS\" $MAINCZ -domus \"$WABBIT_HOME\" $@"
 }
 
 ##############################################################################
 debug_proc_fg() {
   exec sh -c \
-    "exec $JCMD {{vmopts}} -cp \"$LIBS\" {{agent}} $MAINCZ -home \"$WABBIT_HOME\" $@"
+    "exec $JCMD {{vmopts}} -cp \"$LIBS\" {{agent}} $MAINCZ -domus \"$WABBIT_HOME\" $@"
 }
 
 ##############################################################################
 debug_proc_bg() {
   exec sh -c \
     "exec nohup $JCMD {{vmopts}} \
-    -cp \"$LIBS\" {{agent}} $MAINCZ -home \"$WABBIT_HOME\" $@ > /dev/null 2>&1 &"
+    -cp \"$LIBS\" {{agent}} $MAINCZ -domus \"$WABBIT_HOME\" $@ > /dev/null 2>&1 &"
 }
 
 ##############################################################################
@@ -139,11 +140,11 @@ debug_proc() {
 
 ##############################################################################
 case $1 in
-  start | run ) run_proc ;;
-  debug ) debug_proc ;;
-  status ) show_proc ;;
-  stop ) stop_proc ;;
-  *) run_console ;;
+  start | run ) run_proc $@ ;;
+  debug ) debug_proc $@ ;;
+  status ) show_proc $@ ;;
+  stop ) stop_proc $@ ;;
+  *) run_console $@ ;;
 esac
 
 
