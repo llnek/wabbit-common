@@ -23,6 +23,7 @@
   :omit-source true
   :aot :all
 
+
   :java-source-paths ["src/main/java"]
   :source-paths ["src/main/clojure"]
   :test-paths ["src/test/clojure"]
