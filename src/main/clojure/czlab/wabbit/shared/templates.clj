@@ -18,122 +18,114 @@
 (def ^:dynamic *renderer-fn* nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defmacro ^:private trap! "" [s] `(throw (Exception. (str ~s))))
+(defmacro ^:private trap!
+  "" [s] `(throw (Exception. (str ~s))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- fixLineSeps "" [s]
+(defn- fix-line-seps
+  "" [s]
   (->> (if (System/getenv "LEIN_NEW_UNIX_NEWLINES")
          "\n"
          (System/getProperty "line.separator"))
        (cs/replace s "\n")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- slurpToLF
-  "" [^BufferedReader r]
+(defn- slurp->lf
+  [^BufferedReader r]
   (let [sb (StringBuilder.)]
     (loop [s (.readLine r)]
-      (if (nil? s)
-        (str sb)
-        (do
-          (.append sb s)
-          (.append sb "\n")
-          (recur (.readLine r)))))))
+      (when s
+        (.append sb s)
+        (.append sb "\n")
+        (recur (.readLine r)))) (str sb)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- slurpResource "" [res]
+(defn- slurp-resource
+  "" [res]
   ; for 2.0.0 compatibility, can break in 3.0.0
   (-> (if (string? res)
         (io/resource res) res)
-      io/reader slurpToLF fixLineSeps))
+      io/reader slurp->lf fix-line-seps))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 (defmacro sanitize
   "" [s] `(clojure.string/replace ~s "-" "_"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn nameToPath "" [s]
+(defn name->path
+  "" [s]
   (-> (sanitize s)
       (cs/replace "." java.io.File/separator)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn sanitizeNsp "" [s]
+(defn sanitize-nsp
+  "" [s]
   (-> (cs/replace s "/" ".") (cs/replace "_" "-")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn groupName "" [s]
-  (let [grpseq (butlast (cs/split (sanitizeNsp s) #"\."))]
+(defn group-name
+  "" [s]
+  (let [grpseq (butlast (cs/split (sanitize-nsp s) #"\."))]
     (if (seq grpseq)
       (->> grpseq (interpose ".") (apply str)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn year "" [] (.get (Calendar/getInstance) Calendar/YEAR))
+(defn year
+  "" [] (.get (Calendar/getInstance) Calendar/YEAR))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn date "" []
+(defn date
+  "" []
   (-> (java.text.SimpleDateFormat. "yyyy-MM-dd")
       (.format (java.util.Date.))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- resPath "" [path]
+(defn- res-path
+  "" [path]
   (let [p (cs/join "/"
                    ["czlab/wabbit/shared/new" path])]
     [p (io/resource p)]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 (defn renderer
   "" [name & [render-fn]]
   (let [render (or render-fn *renderer-fn*)]
     (fn [template & [data]]
       (let [template (if data
                        (render template data) template)
-            [p r] (resPath template)]
+            [p r] (res-path template)]
         (if r
           (if data
-            (render (slurpResource r) data)
+            (render (slurp-resource r) data)
             (io/reader r))
           (trap! (format
                    "Resource '%s' not found" p)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn rawResourcer "" [name]
+(defn raw-resourcer
+  "" [name]
   (fn [file]
-    (let [[p r] (resPath file)]
+    (let [[p r] (res-path file)]
       (if r
         (io/input-stream r)
         (trap! (format "Resource '%s' not found" p))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- templatePath
+(defn- template-path
   "" ^File [name path data]
   (io/file name (*renderer-fn* path data)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn toFiles
+(defn x->files
   "" [{:keys [dir force?] :as cli-options}
       {:keys [name] :as data} & paths]
-
   (if (or (= "." dir)
           (.mkdir (io/file dir)) force?)
     (doseq [path paths]
       (if (string? path)
-        (.mkdirs (templatePath dir path data))
+        (.mkdirs (template-path dir path data))
         (let [[path content & options] path
-              path (templatePath dir path data)
+              path (template-path dir path data)
               options (apply hash-map options)]
           (.mkdirs (.getParentFile path))
           (io/copy content (io/file path))

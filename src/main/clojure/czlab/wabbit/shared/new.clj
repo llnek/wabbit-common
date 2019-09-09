@@ -1,4 +1,4 @@
-;; Copyright (c) 2013-2017, Kenneth Leung. All rights reserved.
+;; Copyright © 2013-2019, Kenneth Leung. All rights reserved.
 ;; The use and distribution terms for this software are covered by the
 ;; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
 ;; which can be found in the file epl-v10.html at the root of this distribution.
@@ -18,7 +18,6 @@
             [clojure.string :as cs]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 (def ^:dynamic *template-name*
   (or "wabbit"
       (last (cs/split (str *ns*) #"\."))))
@@ -77,33 +76,33 @@
    "public" {}})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- isWindows?
+(defn- is-windows?
   "Is platform Windows?" []
-  (>= (.indexOf (cs/lower-case (System/getProperty "os.name")) "windows") 0))
+  (number? (cs/index-of
+             (cs/lower-case (System/getProperty "os.name")) "windows")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- stripLS "" [s] (cs/replace s #"^[/]+" ""))
+(defn- strip-ls
+  "" [s] (cs/replace s #"^[/]+" ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- juid "" [] (.replaceAll (str (UID.)) "[:\\-]+" ""))
+(defn- juid
+  "" [] (.replaceAll (str (UID.)) "[:\\-]+" ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defmacro ^:private explodePath "" [s] `(remove empty? (cs/split ~s #"/")))
+(defmacro ^:private
+  explode-path "" [s] `(remove empty? (cs/split ~s #"/")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defmacro ^:private sanitizePath "" [s] `(cs/join "/" (explodePath ~s)))
+(defmacro ^:private
+  sanitize-path "" [s] `(cs/join "/" (explode-path ~s)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- render "" [path data]
+(defn- render
+  "" [path data]
   (if (some #(cs/ends-with? path %)
             [".png" ".ico" ".jpg" ".gif"])
-    ((lein/rawResourcer *template-name*) path)
+    ((lein/raw-resourcer *template-name*) path)
     ((lein/renderer *template-name*) path data)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -121,7 +120,7 @@
 (defn- traverse
   "" [par tfiles out]
   (doseq [[k v] tfiles
-          :let [kk (sanitizePath (str par "/" k))]]
+          :let [kk (sanitize-path (str par "/" k))]]
     (cond
       (map? v)
       (if (empty? v)
@@ -143,16 +142,16 @@
      web? (>= (.indexOf (cs/lower-case
                           (str (first args))) "web") 0)
      render-fn (:renderer-fn options)
-     main-ns (lein/sanitizeNsp name)
+     main-ns (lein/sanitize-nsp name)
      pod (last (cs/split main-ns #"\."))
      uid (str (UUID/randomUUID))
      h2dbUrl (->
                (cs/join "/"
-                        [(if (isWindows?)
+                        [(if (is-windows?)
                            "/c:/temp" "/tmp") (juid) pod])
                (str ";MVCC=TRUE;AUTO_RECONNECT=TRUE"))
      data {:user (System/getProperty "user.name")
-           :nested-dirs (lein/nameToPath main-ns)
+           :nested-dirs (lein/name->path main-ns)
            :app-key (cs/replace uid #"-" "")
            :app-type (if web? "web" "soa")
            :h2dbpath h2dbUrl
@@ -168,7 +167,7 @@
     (binding [lein/*renderer-fn* render-fn]
       (traverse "" template-files out)
       (doRender @out data out2)
-      (apply lein/toFiles
+      (apply lein/x->files
              (dissoc options :renderer-fn) data @out2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defproject io.czlab/wabbit-shared "1.0.0"
+(defproject io.czlab/wabbit-shared "1.1.0"
 
   :license {:url "http://www.eclipse.org/legal/epl-v10.html"
             :name "Eclipse Public License"}
@@ -8,13 +8,13 @@
 
   :description "Sharable parts of wabbit."
 
-  :dependencies [[commons-io/commons-io "2.5"]]
+  :dependencies [[commons-io/commons-io "2.6"]]
 
-  :plugins [[cider/cider-nrepl "0.14.0"]
-            [lein-codox "0.10.3"]
-            [lein-cprint "1.2.0"]]
+  :plugins [[cider/cider-nrepl "0.22.2"]
+            [lein-codox "0.10.7"]
+            [lein-cprint "1.3.1"]]
 
-  :profiles {:provided {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]]}
+  :profiles {:provided {:dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]]}
              :uberjar {:aot :all}}
 
   :global-vars {*warn-on-reflection* true}
