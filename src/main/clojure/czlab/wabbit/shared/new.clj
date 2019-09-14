@@ -23,8 +23,11 @@
       (last (cs/split (str *ns*) #"\."))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;left hand side is the target, right side is from the resource path
-(def ^:private template-files
+;;left hand side is the target, right side is from the resource path -
+;;from the resource files, generate a target dir structure.
+(def
+  ^:private
+  template-files
   {"conf/pod.conf" "pod.conf"
 
    "etc"
@@ -106,54 +109,59 @@
     ((lein/renderer *template-name*) path data)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- doRender
-  "" [tfiles data out]
-  (doseq [t tfiles]
-    (if (string? t)
-      (swap! out conj t)
-      (let [[k v] t]
-        (swap! out conj [k (render v data)])))))
+(defn- do-render
+  "" [tfiles data]
+  (loop [out []
+         [t & more] tfiles]
+    (if (nil? t)
+      out
+      (recur
+        (if (string? t)
+          (conj out t)
+          (conj out [(first t) (render (last t) data)])) more))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 (defn- traverse
-  "" [par tfiles out]
-  (doseq [[k v] tfiles
-          :let [kk (sanitize-path (str par "/" k))]]
-    (cond
-      (map? v)
-      (if (empty? v)
-        (swap! out conj kk)
-        (traverse kk v out))
-      (fn? v)
-      (swap! out conj [kk (v kk)])
-      (string? v)
-      (swap! out conj [kk v]))))
+  "Traverse the resource template."
+  ([tfiles] (traverse "" tfiles))
+  ([par tfiles]
+   (loop [out []
+          [t & more] (seq tfiles)]
+     (if (nil? t)
+       out
+       (let [[k v] t
+             kk (sanitize-path (str par "/" k))]
+        (recur
+          (cond (map? v)
+                (if (empty? v)
+                  (conj out kk)
+                  (concat out (traverse kk v)))
+                (fn? v)
+                (conj out [kk (v kk)])
+                (string? v)
+                (conj out [kk v])
+                :else
+                (throw (Exception.
+                         (str "Unsupported resource: " k)))) more))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 (defn new<>
   "Lein template for creating
-  a czlab/wabbit application" [name options & args]
+  a czlab/wabbit application." [name options & args]
 
   (let
     [args (if (empty? args) ["-web"] args)
-     web? (>= (.indexOf (cs/lower-case
-                          (str (first args))) "web") 0)
+     web? (cs/index-of (cs/lower-case
+                         (str (first args))) "web")
      render-fn (:renderer-fn options)
      main-ns (lein/sanitize-nsp name)
      pod (last (cs/split main-ns #"\."))
      uid (str (UUID/randomUUID))
-     h2dbUrl (->
-               (cs/join "/"
-                        [(if (is-windows?)
-                           "/c:/temp" "/tmp") (juid) pod])
-               (str ";MVCC=TRUE;AUTO_RECONNECT=TRUE"))
-     data {:user (System/getProperty "user.name")
-           :nested-dirs (lein/name->path main-ns)
-           :app-key (cs/replace uid #"-" "")
-           :app-type (if web? "web" "soa")
+     h2dbUrl (str (->> [(if (is-windows?)
+                          "/c:/windows/temp" "/tmp") (juid) pod]
+                       (cs/join "/"))
+                  ";MVCC=TRUE;AUTO_RECONNECT=TRUE")
+     data {:nested-dirs (lein/name->path main-ns)
            :h2dbpath h2dbUrl
            :domain main-ns
            :raw-name name
@@ -161,14 +169,15 @@
            :ver "0.1"
            :name name
            :year (lein/year)
-           :date (lein/date)}
-     out2 (atom [])
-     out (atom [])]
+           :date (lein/date)
+           :app-key (cs/replace uid #"-" "")
+           :app-type (if web? "web" "server")
+           :user (System/getProperty "user.name")}]
     (binding [lein/*renderer-fn* render-fn]
-      (traverse "" template-files out)
-      (doRender @out data out2)
       (apply lein/x->files
-             (dissoc options :renderer-fn) data @out2))))
+             (dissoc options :renderer-fn)
+             data
+             (-> (traverse "" template-files) (do-render data))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;EOF

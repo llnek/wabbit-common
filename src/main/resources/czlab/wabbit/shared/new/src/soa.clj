@@ -7,18 +7,18 @@
   {{domain}}.core
 
   (:require [czlab.basal.core :as c]
-            [czlab.basal.str :as s])
+            [czlab.basal.xpis :as po])
 
   (:import [java.io File]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn dftHandler "" [evt res]
-  (println "I just handled event: " (c/id?? evt)))
+(defn dft-handler
+  [evt res]
+  (println "I just handled event: " (po/id evt)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn myAppMain "" [_]
+(defn app-main
+  []
   (println "My AppMain called!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

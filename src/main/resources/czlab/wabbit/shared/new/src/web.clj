@@ -6,18 +6,16 @@
 
   {{domain}}.core
 
-  (:require [czlab.wabbit.plugs.mvc :as mvc]
-            [czlab.convoy.core :as cc]
-            [czlab.wabbit.xpis :as xp]
+  (:require [czlab.wabbit.xpis :as xp]
+            [czlab.niou.core :as cc]
             [czlab.basal.core :as c]
-            [czlab.basal.str :as s])
+            [czlab.basal.xpis :as po]
+            [czlab.wabbit.plugs.mvc :as mvc])
 
   (:import [java.io File]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- ftlContext
-  ""
+(defn- ftl-context
   []
   {:landing
              {:title_line "Sample Web App"
@@ -32,27 +30,27 @@
    :title "wabbit|Sample"})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn dftHandler "" [evt res]
+(defn dft-handler
+  [evt res]
   (c/do-with
     [ch (:socket evt)]
     (let
       [plug (xp/get-pluglet evt)
-       svr (xp/get-server plug)
+       svr (po/parent plug)
        ri (get-in evt
                   [:route :info])
        tpl (:template ri)
        {:keys [data ctype]}
-       (if (s/hgl? tpl)
-         (mvc/loadTemplate plug tpl (ftlContext)))]
+       (if (c/hgl? tpl)
+         (mvc/load-template plug tpl (ftl-context)))]
       (->>
-        (-> (cc/set-res-header res "content-type" ctype)
+        (-> (cc/res-header-set res "content-type" ctype)
             (assoc :body data))
         cc/reply-result ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn myAppMain "" [svr]
+(defn app-main
+  [svr]
   (println  "My AppMain called!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -9,16 +9,15 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies
-  [[org.clojure/clojurescript "1.9.521"]
-   [org.clojure/clojure "1.8.0"]
+  [[org.clojure/clojurescript "1.10.520"]
+   [org.clojure/clojure "1.10.1"]
    [commons-logging "1.2"]
-   [io.czlab/wabbit-cons "1.0.0"]
-   [io.czlab/wabbit "1.0.0"]]
+   [io.czlab/wabbit "1.1.0"]]
 
-  :plugins [[wabbit/lein-template "1.0.0"]
-            [cider/cider-nrepl "0.14.0"]
-            [lein-codox "0.10.3"]
-            [lein-cprint "1.2.0"]]
+  :plugins [[wabbit/lein-template "1.1.0"]
+            [cider/cider-nrepl "0.22.2"]
+            [lein-codox "0.10.7"]
+            [lein-cprint "1.3.1"]]
 
   :kill-port "localhost:4444"
   :profiles
@@ -38,7 +37,7 @@
   :aot :all
 
   :aliases {"wabbit-deploy" ["with-profile" "podify" "wabbit"]
-            "wabbit-run" ["trampoline" "run" "-m" "czlab.wabbit.core"]
+            "wabbit-run" ["trampoline" "run" "-m" "czlab.wabbit.exec"]
             "wabbit-console" ["trampoline" "run" "-m" "czlab.wabbit.cons.con7"]}
 
   :java-source-paths ["src/main/java" "src/test/java"]
@@ -47,7 +46,7 @@
   :resource-paths ["src/main/resources"]
 
   :jvm-opts ["-Dlog4j.configurationFile=file:etc/log4j2c.xml"]
-  :javac-options ["-source" "8"
+  :javac-options [;"-source" "8"
                   "-Xlint:unchecked" "-Xlint:-options" "-Xlint:deprecation"])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

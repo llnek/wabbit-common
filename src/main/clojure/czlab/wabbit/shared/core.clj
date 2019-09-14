@@ -20,12 +20,12 @@
 ;;(set! *warn-on-reflection* true)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn deleteDir
+(defn delete-dir
   "" [dir]
   (try (FileUtils/deleteDirectory (io/file dir)) (catch Throwable _)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn cleanDir
+(defn clean-dir
   "" [dir]
   (try (FileUtils/cleanDirectory (io/file dir)) (catch Throwable _)))
 

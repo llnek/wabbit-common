@@ -24,10 +24,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn- fix-line-seps
   "" [s]
-  (->> (if (System/getenv "LEIN_NEW_UNIX_NEWLINES")
-         "\n"
-         (System/getProperty "line.separator"))
-       (cs/replace s "\n")))
+  (cs/replace s
+              "\n"
+              (if (System/getenv "LEIN_NEW_UNIX_NEWLINES")
+                "\n" (System/getProperty "line.separator"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn- slurp->lf
@@ -54,8 +54,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn name->path
   "" [s]
-  (-> (sanitize s)
-      (cs/replace "." java.io.File/separator)))
+  (cs/replace (sanitize s) "." java.io.File/separator))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn sanitize-nsp
@@ -88,18 +87,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn renderer
-  "" [name & [render-fn]]
-  (let [render (or render-fn *renderer-fn*)]
-    (fn [template & [data]]
-      (let [template (if data
-                       (render template data) template)
-            [p r] (res-path template)]
-        (if r
-          (if data
-            (render (slurp-resource r) data)
-            (io/reader r))
-          (trap! (format
-                   "Resource '%s' not found" p)))))))
+  ""
+  ([name] (renderer name nil))
+  ([name render-fn]
+   (let [render (or render-fn *renderer-fn*)]
+     (fn [template & [data]]
+       (let [template (if data
+                        (render template data) template)
+             [p r] (res-path template)]
+         (if r
+           (if data
+             (render (slurp-resource r) data)
+             (io/reader r))
+           (trap! (format "Resource '%s' not found" p))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn raw-resourcer
@@ -117,8 +117,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn x->files
-  "" [{:keys [dir force?] :as cli-options}
-      {:keys [name] :as data} & paths]
+  "" [{:as cli-options
+       :keys [dir force?]} {:as data :keys [name]} & paths]
   (if (or (= "." dir)
           (.mkdir (io/file dir)) force?)
     (doseq [path paths]

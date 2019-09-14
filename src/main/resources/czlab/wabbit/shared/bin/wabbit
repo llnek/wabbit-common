@@ -37,7 +37,7 @@ fi
 
 ##############################################################################
 CONSCZ=czlab.wabbit.cons.con7
-MAINCZ=czlab.wabbit.core
+MAINCZ=czlab.wabbit.exec
 JCMD=$JAVA_HOME/bin/java
 LIBS=$WABBIT_HOME/lib/*
 
